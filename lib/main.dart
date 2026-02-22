@@ -1,122 +1,151 @@
+
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:myapp/navigation/router.dart';
+
+// Constants for the FitCore color palette
+class FitCoreColors {
+  static const Color background = Color(0xFF0A0A0E);
+  static const Color surface = Color(0xFF13131A);
+  static const Color surfaceElevated = Color(0xFF1C1C26);
+  static const Color accentViolet = Color(0xFF8B6FFF);
+  static const Color accentCoral = Color(0xFFFF5F3D);
+  static const Color accentAmber = Color(0xFFFFB547);
+  static const Color success = Color(0xFF3DDC97);
+  static const Color danger = Color(0xFFFF4D6D);
+  static const Color textPrimary = Color(0xFFF0F0F5);
+  static const Color textSecondary = Color(0xFF72728A);
+  static const Color borderSubtle = Color(0xFF22222E);
+}
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
+}
+
+class ThemeProvider with ChangeNotifier {
+  ThemeMode _themeMode = ThemeMode.dark; // Default to dark mode as per spec
+
+  ThemeMode get themeMode => _themeMode;
+
+  void toggleTheme() {
+    _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    notifyListeners();
+  }
+    void setSystemTheme() {
+    _themeMode = ThemeMode.system;
+    notifyListeners();
+  }
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    // Using Manrope as a close alternative to SF Pro / Google Sans
+    final TextTheme appTextTheme = TextTheme(
+      displayLarge: GoogleFonts.manrope(fontSize: 36, fontWeight: FontWeight.w700, color: FitCoreColors.textPrimary),
+      headlineMedium: GoogleFonts.manrope(fontSize: 22, fontWeight: FontWeight.w600, color: FitCoreColors.textPrimary),
+      headlineSmall: GoogleFonts.manrope(fontSize: 17, fontWeight: FontWeight.w600, color: FitCoreColors.textPrimary),
+      bodyLarge: GoogleFonts.manrope(fontSize: 15, fontWeight: FontWeight.w400, color: FitCoreColors.textPrimary),
+      bodyMedium: GoogleFonts.manrope(fontSize: 12, fontWeight: FontWeight.w400, color: FitCoreColors.textSecondary),
+    ).apply(
+      bodyColor: FitCoreColors.textPrimary,
+      displayColor: FitCoreColors.textPrimary,
     );
-  }
-}
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+    final ThemeData darkTheme = ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: FitCoreColors.background,
+      primaryColor: FitCoreColors.accentViolet,
+      textTheme: appTextTheme,
+      colorScheme: const ColorScheme.dark(
+        primary: FitCoreColors.accentViolet,
+        secondary: FitCoreColors.accentCoral,
+        background: FitCoreColors.background,
+        surface: FitCoreColors.surface,
+        error: FitCoreColors.danger,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onBackground: FitCoreColors.textPrimary,
+        onSurface: FitCoreColors.textPrimary,
+        onError: Colors.white,
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      appBarTheme: AppBarTheme(
+        backgroundColor: FitCoreColors.surface,
+        elevation: 0,
+        titleTextStyle: appTextTheme.headlineMedium,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: FitCoreColors.accentViolet),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: FitCoreColors.accentCoral,
+          foregroundColor: Colors.white,
+          minimumSize: const Size.fromHeight(54),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          textStyle: GoogleFonts.manrope(fontSize: 15, fontWeight: FontWeight.w600),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      cardTheme: CardTheme(
+        elevation: 0,
+        color: FitCoreColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: const BorderSide(color: FitCoreColors.borderSubtle, width: 1),
+        ),
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: FitCoreColors.surface,
+        selectedItemColor: FitCoreColors.accentViolet,
+        unselectedItemColor: FitCoreColors.textSecondary,
+        type: BottomNavigationBarType.fixed,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+      ),
+    );
+
+    // A basic light theme for completeness
+    final ThemeData lightTheme = ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: Colors.white,
+        primaryColor: FitCoreColors.accentViolet,
+        textTheme: appTextTheme.apply(
+            bodyColor: Colors.black87, displayColor: Colors.black87),
+        colorScheme: ColorScheme.fromSeed(seedColor: FitCoreColors.accentViolet)
+    );
+
+
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp.router(
+          routerConfig: router,
+          title: 'FitCore',
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: themeProvider.themeMode,
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''), // English, no country code
+            Locale('fa', ''), // Persian, no country code
+          ],
+          locale: const Locale('fa', ''), // Force Persian for demonstration
+        );
+      },
     );
   }
 }
